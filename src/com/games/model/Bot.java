@@ -23,7 +23,7 @@ public class Bot extends Player {
         }
 
         public Builder addSymbol(char ch) {
-            this.bot.symbol = new Symbol(ch);
+            this.bot.setSymbol(new Symbol(ch));
             return this;
         }
 
@@ -33,12 +33,12 @@ public class Bot extends Player {
         }
 
         public Builder addPlayName(String name) {
-            this.bot.name = name;
+            this.bot.setName(name);
             return this;
         }
 
         public Bot build() {
-            this.bot.type = PlayerType.BOT;
+            this.bot.setType(PlayerType.BOT);
             return this.bot;
         }
 

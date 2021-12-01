@@ -1,5 +1,6 @@
 package com.games.model;
 
+import com.games.constants.GameStatus;
 import com.games.exception.GameException;
 import com.games.strategy.IWinningStrategy;
 
@@ -17,12 +18,15 @@ public class Game {
     private Set<Move> availableMoves;
     private List<IWinningStrategy> winningStrategy;
     private Player currentPlayer;
+    private Player winner;
+    private GameStatus gameStatus;
 
     private Game() {
         this.players = new ArrayList<>();
         this.moves = new ArrayList<>();
         this.availableMoves = new HashSet<>();
         this.winningStrategy = new ArrayList<>();
+        this.gameStatus = GameStatus.ONGOING;
     }
 
     public Board getBoard() {
@@ -53,33 +57,32 @@ public class Game {
         this.availableMoves = availableMoves;
     }
 
+    public void setGameStatus(GameStatus gameStatus) {
+        this.gameStatus = gameStatus;
+    }
+
     public List<Player> getPlayers() {
         return players;
     }
 
     public void run() {
-        while (true) {
-            System.out.println("Turn: " + this.currentPlayer.name);
+        while (this.gameStatus == GameStatus.ONGOING) {
+            System.out.println("Turn: " + this.currentPlayer.getName());
             Move move = currentPlayer.play(this);
             updateBoard(move);
             if(this.getAvailableMoves().size()==0) {
-                System.out.println("Match Drawn....");
-                break;
+                this.gameStatus = GameStatus.DRAW;
             }
             board.displayBoard();
             for(IWinningStrategy strategy: this.winningStrategy) {
-                Player winner = strategy.checkWinner(this);
-                if( winner != null) {
-                    System.out.println("Player " + winner.name + "(" + winner.symbol.getCh() + ") has won");
-                    return;
-                }
+                this.winner = strategy.checkWinner(this);
             }
-
             System.out.println();
             System.out.println("---------------------------------------------------------------------------");
 
             this.currentPlayer = switchPlayer();
         }
+        printResult();
     }
 
     public static Builder getBuilder() {
@@ -89,8 +92,7 @@ public class Game {
     public Player switchPlayer() {
         int i = 0;
         for(Player player: this.getPlayers()) {
-            //System.out.println(player);
-            if(player.symbol.getCh() == this.currentPlayer.symbol.getCh()) {
+            if(player.getSymbol().getCh() == this.currentPlayer.getSymbol().getCh()) {
                 break;
             }
             i++;
@@ -99,10 +101,19 @@ public class Game {
         return this.getPlayers().get(i%this.getPlayers().size());
     }
 
+    public void printResult() {
+        if (this.gameStatus == GameStatus.DRAW) {
+            System.out.println("Match Drawn....");
+        }
+        if(this.gameStatus == GameStatus.RESULT) {
+            System.out.println("Player " + this.winner.getName() + "(" + this.winner.getSymbol().getCh() + ") has won");
+        }
+    }
+
     public void updateBoard(Move move) {
         this.getMoves().add(move);
         this.getAvailableMoves().remove(move);
-        this.getBoard().getBoard().get(move.getX()).get(move.getY()).setSymbol(this.getCurrentPlayer().symbol);
+        this.getBoard().getBoard().get(move.getX()).get(move.getY()).setSymbol(this.getCurrentPlayer().getSymbol());
     }
 
     public static class Builder {
