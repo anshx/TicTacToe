@@ -13,7 +13,7 @@ public class HumanPlayer extends Player{
     }
 
     @Override
-    Move play(Game game) {
+    public Move play(Game game) {
         Move move = null;
         int size = game.getBoard().getBoard().size()-1;
         while(true) {

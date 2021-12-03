@@ -7,7 +7,7 @@ public abstract class Player {
     private PlayerType type;
     private String name;
 
-    abstract Move play(Game game);
+    abstract public Move play(Game game);
 
     public Symbol getSymbol() {
         return symbol;

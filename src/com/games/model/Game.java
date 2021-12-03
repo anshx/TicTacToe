@@ -57,6 +57,10 @@ public class Game {
         this.availableMoves = availableMoves;
     }
 
+    public GameStatus getGameStatus() {
+        return gameStatus;
+    }
+
     public void setGameStatus(GameStatus gameStatus) {
         this.gameStatus = gameStatus;
     }
@@ -65,31 +69,19 @@ public class Game {
         return players;
     }
 
-    public void run() {
-        while (this.gameStatus == GameStatus.ONGOING) {
-            System.out.println("Turn: " + this.currentPlayer.getName());
-            Move move = currentPlayer.play(this);
-            updateBoard(move);
-            if(this.getAvailableMoves().size()==0) {
-                this.gameStatus = GameStatus.DRAW;
-            }
-            board.displayBoard();
-            for(IWinningStrategy strategy: this.winningStrategy) {
-                this.winner = strategy.checkWinner(this);
-            }
-            System.out.println();
-            System.out.println("---------------------------------------------------------------------------");
+    public void setWinner(Player winner) {
+        this.winner = winner;
+    }
 
-            this.currentPlayer = switchPlayer();
-        }
-        printResult();
+    public List<IWinningStrategy> getWinningStrategy() {
+        return winningStrategy;
     }
 
     public static Builder getBuilder() {
         return new Builder();
     }
 
-    public Player switchPlayer() {
+    public void switchPlayer() {
         int i = 0;
         for(Player player: this.getPlayers()) {
             if(player.getSymbol().getCh() == this.currentPlayer.getSymbol().getCh()) {
@@ -98,7 +90,7 @@ public class Game {
             i++;
         }
         i++;
-        return this.getPlayers().get(i%this.getPlayers().size());
+        this.currentPlayer = this.getPlayers().get(i%this.getPlayers().size());
     }
 
     public void printResult() {

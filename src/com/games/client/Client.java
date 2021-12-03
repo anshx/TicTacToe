@@ -1,43 +1,38 @@
 package com.games.client;
 
-import com.games.exception.GameException;
-import com.games.factory.PlayerFactory;
-import com.games.model.Game;
-import com.games.model.Player;
-import com.games.strategy.SimplePlayingStrategy;
-import com.games.strategy.SimpleWinningStrategy;
+import com.games.commands.AddUserCommand;
+import com.games.commands.CommandRegistry;
+import com.games.commands.StartGameCommand;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
-import java.util.Scanner;
 
 public class Client {
-    static Scanner ss = new Scanner(System.in);
+
+    static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    static CommandRegistry registry = new CommandRegistry();
+
     public static void main(String[] args) {
+
+        registry.addCommand(new StartGameCommand());
+        registry.addCommand(new AddUserCommand());
         try {
-            buildGame();
-        }catch (Exception ex) {
-            System.out.println(ex);
+            execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static void execute() throws IOException {
+        boolean toContinue = true;
+        while(toContinue) {
+            System.out.println("Enter a command..");
+            String command = reader.readLine();
+            registry.executeCommand(command);
+            toContinue = false;
         }
     }
-
-    public static void buildGame() throws GameException {
-
-        Game game = Game.getBuilder().addPlayer(PlayerFactory.createHumanPlayer()
-                        .addSymbol('X')
-                        .addPlayName("AnshX")
-                        .build())
-                .addPlayer(PlayerFactory.createBotPlayer()
-                        .addSymbol('O')
-                        .addStrategy(new SimplePlayingStrategy())
-                        .addPlayName("Computer")
-                        .build())
-                .addBoard(3)
-                .addWinningStrategy(new SimpleWinningStrategy())
-                .build();
-
-        game.run();
-
-    }
-
-
 
 }

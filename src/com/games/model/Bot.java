@@ -12,7 +12,7 @@ public class Bot extends Player {
     }
 
     @Override
-    Move play(Game game) {
+    public Move play(Game game) {
         return this.strategy.play(game);
     }
 

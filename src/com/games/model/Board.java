@@ -31,7 +31,7 @@ public class Board {
         for(int i=1;i<=n;i++) {
             for(int j=1;j<=n;j++) {
                 System.out.print(this.board.get(i).get(j).getSymbol() == null ?
-                            " _ " : this.board.get(i).get(j).getSymbol().getCh() + "  ");
+                            "_" : this.board.get(i).get(j).getSymbol().getCh());
             }
             System.out.println();
         }
